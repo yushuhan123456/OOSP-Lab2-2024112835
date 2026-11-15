@@ -1,11 +1,15 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
+import java.util.Random;
+
 /**
  * 测试设计原则：
  * 1. 使用等价类划分覆盖单元素、两个元素和多个元素；
  * 2. 使用边界值分析覆盖重复元素、整十数和最大输入值；
- * 3. 使用能够暴露原代码缺陷的多位整数测试用例。
+ * 3. 使用能够暴露原代码缺陷的多位整数测试用例；
+ * 4. 使用固定种子的随机输入与标准排序结果进行差分校验。
  */
 public class L2024112835_4_Test {
 
@@ -105,5 +109,42 @@ public class L2024112835_4_Test {
         assertEquals(900, new Solution4().maximumGap(
             new int[]{1000, 10, 1, 10, 100}
         ));
+    }
+
+    /**
+     * 测试目的：通过固定种子的随机输入，将基数排序结果与标准排序结果对照。
+     * 测试用例：200 组长度 2 至 30 的非负整数数组，覆盖零值、重复值和不同位数。
+     */
+    @Test
+    public void testRandomArraysAgainstReferenceSort() {
+        Random random = new Random(2024112775L);
+
+        for (int round = 0; round < 200; round++) {
+            int length = 2 + random.nextInt(29);
+            int[] nums = new int[length];
+            for (int i = 0; i < length; i++) {
+                nums[i] = random.nextInt(1_000_000_001);
+                if (i > 0 && random.nextBoolean()) {
+                    nums[i] = nums[random.nextInt(i)];
+                }
+            }
+            if (round % 10 == 0) {
+                nums[random.nextInt(length)] = 0;
+            }
+
+            int[] sorted = nums.clone();
+            Arrays.sort(sorted);
+            int expected = 0;
+            for (int i = 1; i < sorted.length; i++) {
+                expected = Math.max(expected, sorted[i] - sorted[i - 1]);
+            }
+
+            int actual = new Solution4().maximumGap(nums.clone());
+            assertEquals(
+                expected,
+                actual,
+                "round=" + round + ", nums=" + Arrays.toString(nums)
+            );
+        }
     }
 }
