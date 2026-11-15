@@ -96,4 +96,14 @@ public class L2024112835_4_Test {
             new int[]{1, 1000000000}
         ));
     }
+    /**
+     * 测试目的：验证乱序、不同位数和重复元素组合时的结果。
+     * 测试用例：输入 [1000, 10, 1, 10, 100]，期望结果为 900。
+     */
+    @Test
+    public void testMixedDigitsAndDuplicates() {
+        assertEquals(900, new Solution4().maximumGap(
+            new int[]{1000, 10, 1, 10, 100}
+        ));
+    }
 }
